@@ -48,7 +48,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
             //     ),
             //   ),
             // ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               children: <Widget>[
                 Expanded(
@@ -71,12 +71,12 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Card(
               color: Colors.white,
               elevation: 3,
               child: Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -88,7 +88,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     GestureDetector(
@@ -96,7 +96,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                       child: AbsorbPointer(
                         child: TextField(
                           controller: _dateController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: 'Select Date',
                             border: OutlineInputBorder(),
                             filled: true,
@@ -105,7 +105,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Text(
@@ -119,7 +119,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             CustomElevatedButton(
               onTap: () {},
               text: 'Send Broadcast',

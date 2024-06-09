@@ -9,6 +9,7 @@ class FeedbackScreen extends StatefulWidget {
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
   int _selectedRating = -1;
+  String rateingText ="";
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -52,7 +53,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   textAlign: TextAlign.center,
                 ),
               const SizedBox(height: 32),
-              _selectedRating >= 0 ? FormWidget() : const SizedBox.shrink()
+              _selectedRating >= 0 ? FormWidget(selectedRating: rateingText,) : const SizedBox.shrink()
             ],
           ),
         ),
@@ -65,6 +66,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       onTap: () {
         setState(() {
           _selectedRating = rating;
+        rateingText=  _getFeedbackText(rating);
         });
       },
       child: Column(
@@ -78,7 +80,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             Container(
               width: 24,
               height: 20,
-              margin: EdgeInsets.only(top: 4),
+              margin: const EdgeInsets.only(top: 4),
               child: Image.asset(
                 'asset/icon_tick.png',
                 width: 24,

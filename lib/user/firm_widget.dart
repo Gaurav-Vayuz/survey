@@ -1,8 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:survey/provider/home_controller.dart';
 import 'package:survey/user/thank_you.dart';
 
 class FormWidget extends StatefulWidget {
+  final String selectedRating;
+
+  const FormWidget({required this.selectedRating, super.key});
+
   @override
   _FormWidgetState createState() => _FormWidgetState();
 }
@@ -15,7 +21,13 @@ class _FormWidgetState extends State<FormWidget> {
   final TextEditingController _remarksController = TextEditingController();
   String? _selectedCity;
 
-  final List<String> _cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
+  final List<String> _cities = [
+    'New York',
+    'Los Angeles',
+    'Chicago',
+    'Houston',
+    'Phoenix'
+  ];
 
   Widget _buildFormField({
     required TextEditingController controller,
@@ -32,7 +44,7 @@ class _FormWidgetState extends State<FormWidget> {
       decoration: InputDecoration(
         labelText: '$labelText${mandatory ? '*' : ''}',
         hintText: hintText,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
       validator: mandatory
           ? (value) {
@@ -45,18 +57,32 @@ class _FormWidgetState extends State<FormWidget> {
     );
   }
 
+  late HomeController homeController;
+  @override
+  void initState() {
+    // TODO: implement initState
+    homeController = Provider.of(context, listen: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    homeController = context.watch<HomeController>();
     return Form(
-        key: _formKey,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Selected Rating: ${widget.selectedRating}',
+              style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 16),
           _buildFormField(
             controller: _nameController,
             labelText: 'Name',
             hintText: 'Enter your name',
             mandatory: true,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildFormField(
             controller: _contactController,
             labelText: 'Contact No',
@@ -64,15 +90,15 @@ class _FormWidgetState extends State<FormWidget> {
             mandatory: true,
             keyboardType: TextInputType.phone,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildFormField(
             controller: _cityController,
             labelText: 'City',
             hintText: 'Enter your city',
             mandatory: true,
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.text,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildFormField(
             controller: _remarksController,
             labelText: 'Remarks (If any)',
@@ -80,19 +106,46 @@ class _FormWidgetState extends State<FormWidget> {
             mandatory: false,
             maxLines: 3,
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => ThankYouScreen(),
-                    ));
+                homeController
+                    .submitEmoji(widget.selectedRating ?? "", context)
+                    .then((value) {
+                  if (value == true) {
+                    homeController
+                        .submitForm(
+                            _nameController.text ?? "",
+                            _contactController.text ?? "",
+                            _cityController.text,
+                            _remarksController.text,
+                            context)
+                        .then((value) {
+                      if (value == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Feedback Submited'), backgroundColor: Colors.green,));
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => ThankYouScreen(),
+                          ),
+                        );
+                      
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Feedback Submit Failed'), backgroundColor: Colors.red,),
+                        );
+                      }
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Feedback Submit Failed')),
+                    );
+                  }
+                });
+
                 // Form is valid, proceed with your logic
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Processing Data')),
-                );
               }
             },
             style: ElevatedButton.styleFrom(
@@ -103,11 +156,15 @@ class _FormWidgetState extends State<FormWidget> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0), // Rounded corners
               ),
-              padding: EdgeInsets.symmetric(vertical: 15.0), // Vertical padding
-              minimumSize: Size(double.infinity, 50), // Button width and height
+              padding: const EdgeInsets.symmetric(
+                  vertical: 15.0), // Vertical padding
+              minimumSize:
+                  const Size(double.infinity, 50), // Button width and height
             ),
-            child: Text('Submit'),
+            child: const Text('Submit'),
           ),
-        ]));
+        ],
+      ),
+    );
   }
 }
