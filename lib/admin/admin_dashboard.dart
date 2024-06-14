@@ -4,6 +4,8 @@ import 'package:survey/admin/broadcast_screen.dart';
 import 'package:survey/admin/dashboard.dart';
 import 'package:survey/admin/download_custmor_data.dart';
 import 'package:survey/admin/edit_sms_tempalate.dart';
+import 'package:survey/admin/user_list_scren.dart';
+import 'package:survey/user/sign_in_screen.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   @override
@@ -55,6 +57,26 @@ class AdminHomeScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => BroadcastScreen()),
+                  );
+                },
+              ),
+               ListTile(
+                leading: Icon(Icons.person),
+                title: Text("User List", style: GoogleFonts.lato()),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const UserListScreen()),
+                  );
+                },
+              ),
+               ListTile(
+                leading: Icon(Icons.logout),
+                title: Text("Logout", style: GoogleFonts.lato()),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>  LoginPage()),
                   );
                 },
               ),

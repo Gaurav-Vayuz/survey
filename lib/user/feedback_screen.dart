@@ -9,7 +9,7 @@ class FeedbackScreen extends StatefulWidget {
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
   int _selectedRating = -1;
-  String rateingText ="";
+  String rateingText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +21,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment:
-                _selectedRating >= 1 ? MainAxisAlignment.start : MainAxisAlignment.center,
+            mainAxisAlignment: _selectedRating >= 1
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.center,
             children: [
               Text(
-                'How do you like our services?',
+                ' Aapka service mein anubhav kaisa raha ?',
                 style: GoogleFonts.lato(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -35,11 +36,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildEmoji(1, 'asset/emoji_1.png'),
-                  _buildEmoji(2, 'asset/emoji_2.png'),
-                  _buildEmoji(3, 'asset/emoji_3.png'),
-                  _buildEmoji(4, 'asset/emoji_4.png'),
                   _buildEmoji(5, 'asset/emoji_5.png'),
+                  _buildEmoji(4, 'asset/emoji_4.png'),
+                  _buildEmoji(3, 'asset/emoji_3.png'),
+                  _buildEmoji(2, 'asset/emoji_2.png'),
+                  _buildEmoji(1, 'asset/emoji_1.png'),
                 ],
               ),
               const SizedBox(height: 16),
@@ -53,7 +54,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   textAlign: TextAlign.center,
                 ),
               const SizedBox(height: 32),
-              _selectedRating >= 0 ? FormWidget(selectedRating: rateingText,) : const SizedBox.shrink()
+              _selectedRating >= 0
+                  ? FormWidget(
+                      selectedRating: rateingText,
+                    )
+                  : const SizedBox.shrink()
             ],
           ),
         ),
@@ -66,7 +71,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       onTap: () {
         setState(() {
           _selectedRating = rating;
-        rateingText=  _getFeedbackText(rating);
+          rateingText = _getFeedbackText(rating);
         });
       },
       child: Column(
@@ -92,18 +97,21 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     );
   }
 
+
+
+
   String _getFeedbackText(int rating) {
     switch (rating) {
       case 1:
-        return 'Very Dissatisfied';
+        return 'Bahut Kharab';
       case 2:
-        return 'Dissatisfied';
+        return 'Kharab';
       case 3:
-        return 'Neutral';
+        return 'Theek';
       case 4:
-        return 'Satisfied';
+        return 'Accha';
       case 5:
-        return 'Very Satisfied';
+        return 'Bahut Accha';
       default:
         return '';
     }

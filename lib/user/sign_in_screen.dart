@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:survey/admin/admin_dashboard.dart';
+import 'package:survey/master_admin/master_admin_create_screen.dart';
 import 'package:survey/provider/home_controller.dart';
 import 'package:survey/user/feedback_screen.dart';
 
@@ -33,7 +35,7 @@ class _LoginPageState extends State<LoginPage>
     if (value == null || value.isEmpty) {
       return 'Please enter your password';
     }
-    if (value.length < 6) {
+    if (value.length < 3) {
       return 'Password must be at least 6 characters';
     }
     return null;
@@ -134,7 +136,9 @@ class _LoginPageState extends State<LoginPage>
               ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
-                    homeController
+
+                    if(userType == "User"){
+                       homeController
                         .signIn(_usernameController.text.toString() ?? "",
                             _passwordController.text.toString(), context)
                         .then((value) {
@@ -157,6 +161,32 @@ class _LoginPageState extends State<LoginPage>
                         );
                       }
                     });
+                    }else{
+                       homeController
+                        .signInAdmin(_usernameController.text.toString() ?? "",
+                            _passwordController.text.toString(), context)
+                        .then((value) {
+                      if (value == true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Login Success')),
+                        );
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => userType == "User"
+                                ? FeedbackScreen()
+                                : AdminHomeScreen(),
+                          ),
+                        );
+                      } else {
+                        // Form is valid, proceed with your logic
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Login Failed')),
+                        );
+                      }
+                    });
+                    }
+                   
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -175,6 +205,11 @@ class _LoginPageState extends State<LoginPage>
                 ),
                 child: Text('Log in', style: GoogleFonts.lato()),
               ),
+
+              const SizedBox(
+                height: 20,
+              ),
+            
             ],
           ),
         ),

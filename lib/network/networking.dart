@@ -7,7 +7,7 @@ class Networking {
   //Api fun for post API
   Future<dynamic> networkPost(
       {dynamic data, String? token, required String url}) async {
-    final headers = {'Authorization': "Bearer $token"};
+    final headers = {'Authorization': "$token"};
 
     try {
       response = await _dio.post(
@@ -31,7 +31,7 @@ class Networking {
       String? token,
       required String url,
       dynamic params}) async {
-    final headers = {'Authorization': "Bearer $token"};
+    final headers = {'Authorization': "$token"};
     try {
       response = await _dio.get(
         url,

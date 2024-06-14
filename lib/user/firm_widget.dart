@@ -123,24 +123,30 @@ class _FormWidgetState extends State<FormWidget> {
                             context)
                         .then((value) {
                       if (value == true) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Feedback Submited'), backgroundColor: Colors.green,));
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Feedback Submited'),
+                          backgroundColor: Colors.green,
+                        ));
                         Navigator.push(
                           context,
                           CupertinoPageRoute(
                             builder: (context) => ThankYouScreen(),
                           ),
                         );
-                      
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Feedback Submit Failed'), backgroundColor: Colors.red,),
+                          const SnackBar(
+                            content: Text('Feedback Submit Failed'),
+                            backgroundColor: Colors.red,
+                          ),
                         );
                       }
                     });
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Feedback Submit Failed')),
+                      const SnackBar(content: Text('Feedback Submit Failed'),
+                       backgroundColor: Colors.red, ),
                     );
                   }
                 });
