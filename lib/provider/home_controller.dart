@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey/model/get_user_form_model.dart';
@@ -221,6 +223,36 @@ List<GetUserFormData> userFormList=[];
       notifyListeners();
 
       return isSuccess;
+    });
+    return isSuccess;
+  }
+
+   Future<dynamic> sendBroadCastMessage(
+      String message, File? excelSheet, BuildContext context) async {
+    bool isSuccess = false;
+
+    setLoading(true);
+var data = FormData.fromMap({
+  'files': [
+    await MultipartFile.fromFile(excelSheet?.path??"", filename: "excel")
+  ],
+  'message': message,
+});
+    await _myService.networkPost(
+      url: "https://signin-jlq2.onrender.com/api/admin/broadcast",
+      token: adminToken,
+      data: data,
+    ).then((value) {
+      var res = jsonDecode(value.toString());
+      debugPrint(res.toString());
+      isSuccess = true;
+      notifyListeners();
+    }).onError((error, stackTrace) {
+      var err = jsonDecode(error.toString())["error"];
+      setLoading(false);
+      isSuccess = false;
+      print("The error is ${err.toString()}");
+      notifyListeners();
     });
     return isSuccess;
   }

@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:survey/provider/home_controller.dart';
 import 'package:survey/user/custom_elevated_button.dart';
 
 class BroadcastScreen extends StatefulWidget {
@@ -24,8 +28,19 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
     }
   }
 
+  HomeController? homeController;
+  String message = "This is Message by Admin";
+  File? excelSheet;
+  @override
+  void initState() {
+    // TODO: implement initState
+    homeController = Provider.of<HomeController>(context, listen: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    homeController = context.watch<HomeController>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Broadcast Message', style: GoogleFonts.lato()),
@@ -54,7 +69,8 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                 Expanded(
                   child: Text(
                     'Upload List of Contacts: ',
-                    style: GoogleFonts.lato(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.lato(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 ElevatedButton(
@@ -67,7 +83,8 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text('Upload an Excel', style: GoogleFonts.lato(color: Colors.white)),
+                  child: Text('Upload an Excel',
+                      style: GoogleFonts.lato(color: Colors.white)),
                 ),
               ],
             ),
@@ -121,7 +138,23 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
             ),
             const SizedBox(height: 16),
             CustomElevatedButton(
-              onTap: () {},
+              onTap: () {
+                homeController
+                    ?.sendBroadCastMessage(message, excelSheet, context)
+                    .then((value) {
+                  if (value == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Success'),
+                      backgroundColor: Colors.green,
+                    ));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Failed'),
+                      backgroundColor: Colors.red,
+                    ));
+                  }
+                });
+              },
               text: 'Send Broadcast',
             )
           ],
