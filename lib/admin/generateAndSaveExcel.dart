@@ -84,11 +84,14 @@ void _onSaveWithDialogPressed(Excel excel, BuildContext contxt) async {
         ),
       );
       ScaffoldMessenger.of(contxt).showSnackBar(
-        SnackBar(content: Text('Storage permission granted')),
+        SnackBar(content: Text('File Saved Successfully')),
       );
       log('Saved to $savedFile');
     }
   } catch (error) {
+    ScaffoldMessenger.of(contxt).showSnackBar(
+      SnackBar(content: Text('Error :error ')),
+    );
     log('Error: $error');
   }
 }
