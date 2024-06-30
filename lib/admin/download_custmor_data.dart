@@ -16,8 +16,7 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
   TextEditingController _endDateController = TextEditingController();
   String? _selectedFormat;
 
-  Future<void> _selectDate(
-      BuildContext context, TextEditingController controller) async {
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -75,8 +74,7 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
           children: <Widget>[
             Text(
               'Download Excel File:',
-              style:
-                  GoogleFonts.lato(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.lato(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             // Row(
@@ -151,7 +149,7 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
             CustomElevatedButton(
               onTap: () {
                 try {
-                  generateExcel(homeController!.userFormList);
+                  generateExcel(homeController!.userFormList, context);
                 } catch (e) {}
               },
               text: 'Download',

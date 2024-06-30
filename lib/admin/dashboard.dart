@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:survey/customer.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -18,7 +19,6 @@ class _CustomerDataScreenState extends State<CustomerDataScreen> {
   HomeController? homeController;
   @override
   void initState() {
-    // TODO: implement initState
     homeController = Provider.of(context, listen: false);
     getUserForm();
     super.initState();
@@ -43,71 +43,93 @@ class _CustomerDataScreenState extends State<CustomerDataScreen> {
     });
   }
 
+  Future<void> requestStoragePermission(BuildContext context) async {
+    final status = await Permission.storage.status;
+
+    if (status.isDenied) {
+      final result = await Permission.storage.request();
+
+      if (result.isGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Storage permission granted')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Storage permission denied')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     homeController = context.watch<HomeController>();
-    final CustomerDataSource customerDataSource =
-        CustomerDataSource(customers: customers);
+    final CustomerDataSource customerDataSource = CustomerDataSource(customers: customers);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CreateUserByMaterAdminScreen()),
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) => CreateUserByMaterAdminScreen()),
+      //     );
+      //   },
+      //   child: const Icon(Icons.add),
+      // ),
       body: homeController!.loading
           ? const Center(child: CircularProgressIndicator())
-          : homeController!.userFormList.isNotEmpty? SfDataGrid(
-              source: customerDataSource,
-              columns: [
-                GridColumn(
-                  columnName: 'id',
-                  label: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    alignment: Alignment.center,
-                    child: Text('ID', style: GoogleFonts.lato()),
-                  ),
-                ),
-                GridColumn(
-                  columnName: 'name',
-                  label: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    alignment: Alignment.center,
-                    child: Text('Name', style: GoogleFonts.lato()),
-                  ),
-                ),
-                GridColumn(
-                  columnName: 'contactNumber',
-                  label: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    alignment: Alignment.center,
-                    child: Text('Contact Number', style: GoogleFonts.lato()),
-                  ),
-                ),
-                GridColumn(
-                  columnName: 'city',
-                  label: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    alignment: Alignment.center,
-                    child: Text('City', style: GoogleFonts.lato()),
-                  ),
-                ),
-                GridColumn(
-                  columnName: 'Remarks',
-                  label: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    alignment: Alignment.center,
-                    child: Text('Remarks', style: GoogleFonts.lato()),
-                  ),
-                ),
-              ],
-            ):const Center(child: Text("No Data Found", style: TextStyle( fontSize: 24),)),
-
+          : homeController!.userFormList.isNotEmpty
+              ? SfDataGrid(
+                  source: customerDataSource,
+                  columns: [
+                    GridColumn(
+                      columnName: 'id',
+                      label: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        alignment: Alignment.center,
+                        child: Text('ID', style: GoogleFonts.lato()),
+                      ),
+                    ),
+                    GridColumn(
+                      columnName: 'name',
+                      label: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        alignment: Alignment.center,
+                        child: Text('Name', style: GoogleFonts.lato()),
+                      ),
+                    ),
+                    GridColumn(
+                      columnName: 'contactNumber',
+                      label: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        alignment: Alignment.center,
+                        child: Text('Contact Number', style: GoogleFonts.lato()),
+                      ),
+                    ),
+                    GridColumn(
+                      columnName: 'city',
+                      label: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        alignment: Alignment.center,
+                        child: Text('City', style: GoogleFonts.lato()),
+                      ),
+                    ),
+                    GridColumn(
+                      columnName: 'Remarks',
+                      label: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        alignment: Alignment.center,
+                        child: Text('Remarks', style: GoogleFonts.lato()),
+                      ),
+                    ),
+                  ],
+                )
+              : const Center(
+                  child: Text(
+                  "No Data Found",
+                  style: TextStyle(fontSize: 24),
+                )),
     );
   }
 }
