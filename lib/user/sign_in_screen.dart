@@ -61,6 +61,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     homeController = context.watch<HomeController>();
     return Scaffold(
       appBar: AppBar(
+        
         toolbarHeight: 60,
         centerTitle: true,
         title: Text('Login', style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600)),

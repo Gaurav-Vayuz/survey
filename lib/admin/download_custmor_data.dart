@@ -65,6 +65,7 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
     homeController = context.watch<HomeController>();
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Colors.teal,
         title: Text('Download Excel File', style: GoogleFonts.lato()),
       ),
       body: Padding(

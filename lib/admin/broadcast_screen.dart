@@ -73,6 +73,7 @@ Save this as default in textfield''';
     homeController = context.watch<HomeController>();
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Colors.teal,
         title: Text('Broadcast Message', style: GoogleFonts.lato()),
       ),
       body: Padding(

@@ -11,7 +11,8 @@ class AdminHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+        appBar: AppBar(backgroundColor: Colors.teal,
+
           title: Text('Admin Home', style: GoogleFonts.lato()),
         ),
         drawer: Drawer(
@@ -20,7 +21,7 @@ class AdminHomeScreen extends StatelessWidget {
             children: <Widget>[
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.teal,
                 ),
                 child: Text(
                   'Admin Menu',
@@ -31,8 +32,8 @@ class AdminHomeScreen extends StatelessWidget {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.data_usage),
-                title: Text('Edit SMS template', style: GoogleFonts.lato()),
+                leading: Icon(Icons.message_outlined),
+                title: Text('Send SMS', style: GoogleFonts.lato()),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -92,6 +93,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Colors.teal,
         title: Text('Register', style: GoogleFonts.lato()),
       ),
       body: Center(
@@ -109,6 +111,7 @@ class BroadcastSmsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Colors.teal,
         title: Text('Broadcast SMS', style: GoogleFonts.lato()),
       ),
       body: Center(

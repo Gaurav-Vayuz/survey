@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:survey/provider/home_controller.dart';
 import 'package:survey/user/custom_elevated_button.dart';
 
 class EditSmsTemplateScreen extends StatefulWidget {
@@ -8,25 +10,32 @@ class EditSmsTemplateScreen extends StatefulWidget {
 }
 
 class _EditSmsTemplateScreenState extends State<EditSmsTemplateScreen> {
-  final TextEditingController _controller = TextEditingController();
-
+  final TextEditingController messageController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  HomeController? homeController;
   @override
   void initState() {
     // TODO: implement initState
-    String mssg =
-        '''Thank You for Submitting Your Feedback! Your feedback is valuable for us. We are constantly working to make
-your experience smooth. If you want to add new products into our stock or for any enquiry.
-Please submit your responses on google link send below. Thank You!!!
-Save this as default in textfield''';
-    _controller.text = mssg;
+    homeController = Provider.of(context, listen: false);
+   
+  
     super.initState();
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    
+  }
+
+  @override
   Widget build(BuildContext context) {
+    homeController = context.watch<HomeController>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit SMS Template', style: GoogleFonts.lato()),
+        backgroundColor: Colors.teal,
+        title: Text('Send SMS', style: GoogleFonts.lato()),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -35,27 +44,60 @@ Save this as default in textfield''';
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Text EDIT SMS Template:',
+                'Fill Details ',
                 style: GoogleFonts.lato(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
-                controller: _controller,
+                controller: phoneController,
+                maxLines: 1,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: 'Enter phone Number without +91',
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: messageController,
                 maxLines: 15,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  hintText: 'Enter your SMS template here',
+                  hintText: 'Enter your SMS here',
                 ),
               ),
-              SizedBox(height: 20),
-              CustomElevatedButton(
-                onTap: () {},
-                text: 'Update',
+              const SizedBox(height: 20),
+             homeController!.loading?Center(child: CircularProgressIndicator()): CustomElevatedButton(
+                onTap: () {
+                  if (phoneController.text.isEmpty &&
+                      messageController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('All Filed are Required !'), backgroundColor: Colors.red,));
+                  } else {
+                      homeController
+                      ?.sendSms(
+                          phoneController.text, messageController.text, context)
+                      .then((value) {
+                    if (value == true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text(' Sms Sent'), backgroundColor: Colors.green,));
+                           
+                    } else {
+                       ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('SomeThing went Wrong'), backgroundColor: Colors.red,));
+                    }
+                  });
+                  }
+
+                
+                },
+                text: 'Send',
               )
             ],
           ),

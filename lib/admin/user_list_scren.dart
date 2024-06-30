@@ -29,6 +29,7 @@ class _UserListScreenState extends State<UserListScreen> {
     homeController = context.watch<HomeController>();
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Colors.teal,
         title: const Text("User List Screen"),
       ),
       body: homeController!.userList.isEmpty

@@ -24,6 +24,7 @@ class _CreateUserByMaterAdminScreenState extends State<CreateUserByMaterAdminScr
      homeController = context.watch<HomeController>();
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Colors.teal,
         title: const Text('Create User'),
       ),
       body: Padding(

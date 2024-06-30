@@ -259,6 +259,34 @@ var data = FormData.fromMap({
     });
     return isSuccess;
   }
+
+  Future<dynamic> sendSms(
+      String phoneNumber, String message, BuildContext context) async {
+    setLoading(true);
+
+    await _myService.networkPost(
+      token: adminToken,
+      url: "https://signin-jlq2.onrender.com/api/admin/send-message",
+      data: {
+        "phoneNumber": "+91${phoneNumber}",
+        "message": message,
+      },
+    ).then((value) {
+      var res = jsonDecode(value.toString());
+      isSuccess = true;
+       setLoading(false);
+      notifyListeners();
+
+      return isSuccess;
+    }).onError((error, stackTrace) {
+      setLoading(false);
+      isSuccess = false;
+      notifyListeners();
+      return isSuccess;
+    });
+    return isSuccess;
+  }
+
 }
 
 

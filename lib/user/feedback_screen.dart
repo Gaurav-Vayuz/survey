@@ -15,6 +15,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Colors.teal,
         title: Text('Feedback', style: GoogleFonts.lato()),
       ),
       body: Padding(

@@ -10,6 +10,7 @@ class ThankYouScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: Colors.teal,
         title: Text('Thank You', style: GoogleFonts.lato()),
       ),
       body: Center(
