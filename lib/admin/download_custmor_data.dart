@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:survey/admin/generateAndSaveExcel.dart';
+import 'package:survey/provider/home_controller.dart';
 import 'package:survey/user/custom_elevated_button.dart';
 
 class DownloadExcelScreen extends StatefulWidget {
@@ -13,7 +16,8 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
   TextEditingController _endDateController = TextEditingController();
   String? _selectedFormat;
 
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -33,7 +37,7 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
     DateTime endDate = now;
 
     if (type == 'Yesterday') {
-      startDate = endDate.subtract(Duration(days: 1));
+      startDate = endDate.subtract(const Duration(days: 1));
     } else if (type == 'Today') {
       startDate = endDate;
     } else if (type == 'Month Till Date') {
@@ -48,8 +52,18 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
     });
   }
 
+  HomeController? homeController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    homeController = Provider.of(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
+    homeController = context.watch<HomeController>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Download Excel File', style: GoogleFonts.lato()),
@@ -61,65 +75,66 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
           children: <Widget>[
             Text(
               'Download Excel File:',
-              style: GoogleFonts.lato(fontSize: 18, fontWeight: FontWeight.bold),
+              style:
+                  GoogleFonts.lato(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _setDateRange('Yesterday'),
-                  child: Text('Yesterday', style: GoogleFonts.lato()),
-                ),
-                ElevatedButton(
-                  onPressed: () => _setDateRange('Today'),
-                  child: Text('Today', style: GoogleFonts.lato()),
-                ),
-                ElevatedButton(
-                  onPressed: () => _setDateRange('Month Till Date'),
-                  child: Text('Month Till Date', style: GoogleFonts.lato()),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    controller: _startDateController,
-                    decoration: InputDecoration(
-                      hintText: 'Start Date',
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.calendar_today),
-                        onPressed: () => _selectDate(context, _startDateController),
-                      ),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: TextField(
-                    controller: _endDateController,
-                    decoration: InputDecoration(
-                      hintText: 'End Date',
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.calendar_today),
-                        onPressed: () => _selectDate(context, _endDateController),
-                      ),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     ElevatedButton(
+            //       onPressed: () => _setDateRange('Yesterday'),
+            //       child: Text('Yesterday', style: GoogleFonts.lato()),
+            //     ),
+            //     ElevatedButton(
+            //       onPressed: () => _setDateRange('Today'),
+            //       child: Text('Today', style: GoogleFonts.lato()),
+            //     ),
+            //     ElevatedButton(
+            //       onPressed: () => _setDateRange('Month Till Date'),
+            //       child: Text('Month Till Date', style: GoogleFonts.lato()),
+            //     ),
+            //   ],
+            // ),
+            // SizedBox(height: 16),
+            // Row(
+            //   children: <Widget>[
+            //     Expanded(
+            //       child: TextField(
+            //         controller: _startDateController,
+            //         decoration: InputDecoration(
+            //           hintText: 'Start Date',
+            //           suffixIcon: IconButton(
+            //             icon: Icon(Icons.calendar_today),
+            //             onPressed: () => _selectDate(context, _startDateController),
+            //           ),
+            //           border: OutlineInputBorder(),
+            //         ),
+            //       ),
+            //     ),
+            //     SizedBox(width: 16),
+            //     Expanded(
+            //       child: TextField(
+            //         controller: _endDateController,
+            //         decoration: InputDecoration(
+            //           hintText: 'End Date',
+            //           suffixIcon: IconButton(
+            //             icon: Icon(Icons.calendar_today),
+            //             onPressed: () => _selectDate(context, _endDateController),
+            //           ),
+            //           border: OutlineInputBorder(),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Download as',
                 border: OutlineInputBorder(),
               ),
-              items: ['Excel', 'CSV', 'PDF'].map((String format) {
+              items: ['Excel'].map((String format) {
                 return DropdownMenuItem<String>(
                   value: format,
                   child: Text(format, style: GoogleFonts.lato()),
@@ -127,14 +142,18 @@ class _DownloadExcelScreenState extends State<DownloadExcelScreen> {
               }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
-                  _selectedFormat = newValue;
+                  // _selectedFormat = newValue;
                 });
               },
               value: _selectedFormat,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             CustomElevatedButton(
-              onTap: () {},
+              onTap: () {
+                try {
+                  generateExcel(homeController!.userFormList);
+                } catch (e) {}
+              },
               text: 'Download',
             )
           ],

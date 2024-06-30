@@ -62,7 +62,7 @@ class _CustomerDataScreenState extends State<CustomerDataScreen> {
       ),
       body: homeController!.loading
           ? const Center(child: CircularProgressIndicator())
-          : SfDataGrid(
+          : homeController!.userFormList.isNotEmpty? SfDataGrid(
               source: customerDataSource,
               columns: [
                 GridColumn(
@@ -106,7 +106,8 @@ class _CustomerDataScreenState extends State<CustomerDataScreen> {
                   ),
                 ),
               ],
-            ),
+            ):const Center(child: Text("No Data Found", style: TextStyle( fontSize: 24),)),
+
     );
   }
 }

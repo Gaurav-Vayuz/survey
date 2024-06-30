@@ -1,34 +1,63 @@
-// import 'dart:io';
-// import 'package:flutter/material.dart';
-// import 'package:survey/customer.dart';
+import 'package:flutter/material.dart';
+import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 
-// Future<void> generateAndSaveExcel(List<Customer> customers) async {
-//   var excel = Excel.createExcel();
-//   Sheet sheetObject = excel['Sheet1'];
+import '../model/get_user_form_model.dart';
 
-//   // Add header row
-//   sheetObject.appendRow(['ID', 'Name', 'Contact Number', 'City']);
+Future<void> generateExcel(List<GetUserFormData> userDetails) async {
+  // Create an Excel document.
+  var excel = Excel.createExcel();
+  // Remove any default sheet created (like sheet1)
+  
 
-//   // Add customer data
-//   for (Customer customer in customers) {
-//     sheetObject.appendRow([
-//       customer.id,
-//       customer.name,
-//       customer.contactNumber,
-//       customer.city
-//     ]);
-//   }
+  // Create a new sheet named 'UserDetails'.
+  var sheetObject = excel['Sheet1'];
 
-//   // Save the Excel file
-//   var status = await Permission.storage.request();
-//   if (status.isGranted) {
-//     final directory = await getExternalStorageDirectory();
-//     final path = '${directory!.path}/CustomerData.xlsx';
-//     File(path)
-//       ..createSync(recursive: true)
-//       ..writeAsBytesSync(excel.encode()!);
-//     print('Excel file saved to $path');
-//   } else {
-//     print('Permission denied');
-//   }
-// }
+  // Add headers to the sheet.
+  sheetObject.appendRow(["contactNo"]);
+
+  // Add user details to the sheet.
+  for (var user in userDetails) {
+    sheetObject.appendRow([user.contactNo]);
+  }
+  // if (excel.tables.keys.length == 2) {
+  //   excel.delete("Sheet1");
+  // }
+
+  // Request storage permissions.
+  if (Platform.isAndroid) {
+    if (!await _requestPermission(Permission.storage)) {
+      print('Permission denied');
+      return;
+    }
+  }
+
+  // Get the directory to save the file.
+  Directory? directory;
+  if (Platform.isAndroid) {
+    directory = await getExternalStorageDirectory();
+  } else {
+    directory = await getApplicationDocumentsDirectory();
+  }
+
+
+  String outputFile = "${directory!.path}/user_details.xlsx";
+
+
+  File(outputFile)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  print('Excel file saved at $outputFile');
+}
+
+Future<bool> _requestPermission(Permission permission) async {
+  if (await permission.isGranted) {
+    return true;
+  } else {
+    var result = await permission.request();
+    return result == PermissionStatus.granted;
+  }
+}

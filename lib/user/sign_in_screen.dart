@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage>
           ],
         ),
       ),
-      body: TabBarView(
+      body:homeController.loading?Center(child: CircularProgressIndicator()): TabBarView(
         controller: _tabController,
         children: [
           _buildLoginTab('User', _userFormKey),

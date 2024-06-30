@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,8 @@ import 'package:survey/provider/home_controller.dart';
 import 'package:survey/user/custom_elevated_button.dart';
 
 class BroadcastScreen extends StatefulWidget {
+  const BroadcastScreen({super.key});
+
   @override
   _BroadcastScreenState createState() => _BroadcastScreenState();
 }
@@ -29,13 +32,40 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
   }
 
   HomeController? homeController;
-  String message = "This is Message by Admin";
+  
   File? excelSheet;
+ final TextEditingController controller = TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     homeController = Provider.of<HomeController>(context, listen: false);
+      controller.text =
+        '''Thank You for Submitting Your Feedback! Your feedback is valuable for us. We are constantly working to make
+your experience smooth. If you want to add new products into our stock or for any enquiry.
+Please submit your responses on google link send below. Thank You!!!
+Save this as default in textfield''';
     super.initState();
+  }
+
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx',],
+    );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      if (file.lengthSync() <= 5 * 1024 * 1024) {
+        setState(() {
+          excelSheet = file;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text('File size exceeds 5 MB. Please select a smaller file.'),
+          backgroundColor: Colors.red,
+        ));
+      }
+    }
   }
 
   @override
@@ -50,19 +80,6 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // GestureDetector(
-            //   onTap: () {
-            //     // Handle template download
-            //   },
-            //   child: Text(
-            //     'Download Template: Template Format',
-            //     style: TextStyle(
-            //       color: Colors.blue,
-            //       fontWeight: FontWeight.bold,
-            //       decoration: TextDecoration.underline,
-            //     ),
-            //   ),
-            // ),
             const SizedBox(height: 16),
             Row(
               children: <Widget>[
@@ -74,9 +91,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    // Handle file upload
-                  },
+                  onPressed: _pickFile,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     shape: RoundedRectangleBorder(
@@ -89,71 +104,42 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            Card(
-              color: Colors.white,
-              elevation: 3,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hey there!\n\n'
-                      'Stock has been arrived, you can visit and collect items on Date ',
-                      style: GoogleFonts.lato(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () => _selectDate(context),
-                      child: AbsorbPointer(
-                        child: TextField(
-                          controller: _dateController,
-                          decoration: const InputDecoration(
-                            hintText: 'Select Date',
-                            border: OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      '.\nFor any query contact Helpdesk!',
-                      style: GoogleFonts.lato(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+              TextField(
+                controller: controller,
+                maxLines: 8,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: 'Enter your SMS template here',
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+             
+           const SizedBox(height: 16),
             CustomElevatedButton(
               onTap: () {
-                homeController
-                    ?.sendBroadCastMessage(message, excelSheet, context)
-                    .then((value) {
-                  if (value == true) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Success'),
-                      backgroundColor: Colors.green,
-                    ));
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Failed'),
-                      backgroundColor: Colors.red,
-                    ));
-                  }
-                });
+                if (excelSheet?.path != null) {
+                  homeController
+                      ?.sendBroadCastMessage(controller.text, excelSheet, context)
+                      .then((value) {
+                    if (value == true) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Success'),
+                        backgroundColor: Colors.green,
+                      ));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Failed'),
+                        backgroundColor: Colors.red,
+                      ));
+                    }
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Kindly add the xlsx sheet'),
+                    backgroundColor: Colors.red,
+                  ));
+                }
               },
               text: 'Send Broadcast',
             )

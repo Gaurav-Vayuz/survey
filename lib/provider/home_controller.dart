@@ -64,6 +64,7 @@ class HomeController extends ChangeNotifier {
       var res = jsonDecode(value.toString());
       debugPrint(res.toString());
       isSuccess = true;
+        setLoading(false);
       notifyListeners();
     }).onError((error, stackTrace) {
       //var err = jsonDecode(error.toString())["error"];
@@ -94,6 +95,7 @@ class HomeController extends ChangeNotifier {
     ).then((value) {
       var res = jsonDecode(value.toString());
       debugPrint(res.toString());
+      setLoading(false);
       isSuccess = true;
       notifyListeners();
     }).onError((error, stackTrace) {
@@ -135,7 +137,7 @@ class HomeController extends ChangeNotifier {
 
   Future<dynamic> signInAdmin(
       String userId, String password, BuildContext context) async {
-   // setLoading(true);
+    setLoading(true);
 
     await _myService.networkPost(
       url: "https://signin-jlq2.onrender.com/api/admin/sign-in",
@@ -233,7 +235,7 @@ List<GetUserFormData> userFormList=[];
 
     setLoading(true);
 var data = FormData.fromMap({
-  'files': [
+  'file': [
     await MultipartFile.fromFile(excelSheet?.path??"", filename: "excel")
   ],
   'message': message,
@@ -246,6 +248,7 @@ var data = FormData.fromMap({
       var res = jsonDecode(value.toString());
       debugPrint(res.toString());
       isSuccess = true;
+        setLoading(false);
       notifyListeners();
     }).onError((error, stackTrace) {
       var err = jsonDecode(error.toString())["error"];
