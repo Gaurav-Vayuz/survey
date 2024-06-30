@@ -21,9 +21,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: _selectedRating >= 1
-                ? MainAxisAlignment.start
-                : MainAxisAlignment.center,
+            mainAxisAlignment:
+                _selectedRating >= 1 ? MainAxisAlignment.start : MainAxisAlignment.center,
             children: [
               Text(
                 ' Aapka service mein anubhav kaisa raha ?',
@@ -78,8 +77,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         children: [
           Image.asset(
             assetPath,
-            width: 50,
-            height: 50,
+            width: MediaQuery.of(context).size.width / 6,
+            height: MediaQuery.of(context).size.width / 6,
           ),
           if (_selectedRating == rating)
             Container(
@@ -96,9 +95,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       ),
     );
   }
-
-
-
 
   String _getFeedbackText(int rating) {
     switch (rating) {

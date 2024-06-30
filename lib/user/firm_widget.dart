@@ -15,25 +15,21 @@ class FormWidget extends StatefulWidget {
 
 class _FormWidgetState extends State<FormWidget> {
   final _formKey = GlobalKey<FormState>();
+  String selectedValue = 'Agra';
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
   String? _selectedCity;
 
-  final List<String> _cities = [
-    'New York',
-    'Los Angeles',
-    'Chicago',
-    'Houston',
-    'Phoenix'
-  ];
+  final List<String> _cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
 
   Widget _buildFormField({
     required TextEditingController controller,
     required String labelText,
     required String hintText,
     required bool mandatory,
+    String prefix = '',
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
   }) {
@@ -44,6 +40,7 @@ class _FormWidgetState extends State<FormWidget> {
       decoration: InputDecoration(
         labelText: '$labelText${mandatory ? '*' : ''}',
         hintText: hintText,
+        prefixText: prefix,
         border: const OutlineInputBorder(),
       ),
       validator: mandatory
@@ -73,8 +70,7 @@ class _FormWidgetState extends State<FormWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Selected Rating: ${widget.selectedRating}',
-              style: TextStyle(fontSize: 16)),
+          Text('Selected Rating: ${widget.selectedRating}', style: TextStyle(fontSize: 16)),
           const SizedBox(height: 16),
           _buildFormField(
             controller: _nameController,
@@ -88,16 +84,18 @@ class _FormWidgetState extends State<FormWidget> {
             labelText: 'Contact No',
             hintText: 'Enter your contact number',
             mandatory: true,
+            prefix: '+91 ',
             keyboardType: TextInputType.phone,
           ),
           const SizedBox(height: 16),
-          _buildFormField(
-            controller: _cityController,
-            labelText: 'City',
-            hintText: 'Enter your city',
-            mandatory: true,
-            keyboardType: TextInputType.text,
-          ),
+          // _buildFormField(
+          //   controller: _cityController,
+          //   labelText: 'City',
+          //   hintText: 'Enter your city',
+          //   mandatory: true,
+          //   keyboardType: TextInputType.text,
+          // ),
+          cityDropDown(),
           const SizedBox(height: 16),
           _buildFormField(
             controller: _remarksController,
@@ -110,21 +108,18 @@ class _FormWidgetState extends State<FormWidget> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                homeController
-                    .submitEmoji(widget.selectedRating ?? "", context)
-                    .then((value) {
+                homeController.submitEmoji(widget.selectedRating ?? "", context).then((value) {
                   if (value == true) {
                     homeController
                         .submitForm(
                             _nameController.text ?? "",
-                            _contactController.text ?? "",
-                            _cityController.text,
+                            "+91${_contactController.text}" ?? "",
+                            _selectedCity!,
                             _remarksController.text,
                             context)
                         .then((value) {
                       if (value == true) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text('Feedback Submited'),
                           backgroundColor: Colors.green,
                         ));
@@ -145,8 +140,10 @@ class _FormWidgetState extends State<FormWidget> {
                     });
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Feedback Submit Failed'),
-                       backgroundColor: Colors.red, ),
+                      const SnackBar(
+                        content: Text('Feedback Submit Failed'),
+                        backgroundColor: Colors.red,
+                      ),
                     );
                   }
                 });
@@ -162,15 +159,36 @@ class _FormWidgetState extends State<FormWidget> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0), // Rounded corners
               ),
-              padding: const EdgeInsets.symmetric(
-                  vertical: 15.0), // Vertical padding
-              minimumSize:
-                  const Size(double.infinity, 50), // Button width and height
+              padding: const EdgeInsets.symmetric(vertical: 15.0), // Vertical padding
+              minimumSize: const Size(double.infinity, 50), // Button width and height
             ),
             child: const Text('Submit'),
           ),
         ],
       ),
+    );
+  }
+
+  Widget cityDropDown() {
+    final List<String> items = ['Agra', 'Firozabad', 'Mainpuri', 'Etah', 'Kasganj', 'Other'];
+    return DropdownButtonFormField<String>(
+      value: selectedValue,
+      items: items.map((String item) {
+        return DropdownMenuItem<String>(
+          value: item,
+          child: Text(item),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          selectedValue = newValue!;
+        });
+      },
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Select a City',
+      ),
+      isExpanded: true,
     );
   }
 }
